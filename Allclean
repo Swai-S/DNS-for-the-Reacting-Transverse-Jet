@@ -1,0 +1,36 @@
+#!/bin/bash
+cd "${0%/*}" || exit 1    # Run from this directory
+
+echo "=========================================="
+echo "Cleaning case but preserving Fluent mesh"
+echo "=========================================="
+
+# Preserve the original Fluent mesh file (in current directory)
+if [ -f "2DJISCFMeshv212file.msh" ]; then
+    echo "Preserving Fluent mesh: 2DJISCFMeshv212file.msh"
+    cp 2DJISCFMeshv212file.msh /tmp/fluent_mesh_backup.msh
+fi
+
+# Clean the case using OpenFOAM function
+. $WM_PROJECT_DIR/bin/tools/CleanFunctions
+cleanCase
+
+# Restore the Fluent mesh if it was backed up
+if [ -f "/tmp/fluent_mesh_backup.msh" ]; then
+    echo "Restoring Fluent mesh..."
+    cp /tmp/fluent_mesh_backup.msh 2DJISCFMeshv212file.msh
+    rm /tmp/fluent_mesh_backup.msh
+    echo "Fluent mesh restored to 2DJISCFMeshv212file.msh"
+fi
+
+# Additional cleanup of common files
+echo "Cleaning additional files..."
+rm -f log.* 2>/dev/null
+rm -f processor* 2>/dev/null
+rm -f *.foam 2>/dev/null
+
+echo "=========================================="
+echo "Cleanup completed! Fluent mesh preserved."
+echo "=========================================="
+
+#------------------------------------------------------------------------------#
