@@ -1,0 +1,9 @@
+# Mesh files (add only if explicitly requested)
+*.msh
+
+# OpenFOAM generated files
+constant/polyMesh/
+[0-9]*/
+log.*
+processor*/
+postProcessing/
